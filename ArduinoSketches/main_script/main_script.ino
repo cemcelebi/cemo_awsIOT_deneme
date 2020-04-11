@@ -1,4 +1,4 @@
-#include "secrets.h"
+#include "/home/hardal/Desktop/secrets/secrets.h"
 #include <WiFiClientSecure.h>
 #include <MQTTClient.h>
 #include <ArduinoJson.h>
