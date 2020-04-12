@@ -24,11 +24,12 @@ void connectAWS()
   }
 
   // Configure WiFiClientSecure to use the AWS IoT device credentials
-  net.setCACert(AWS_CERT_CA);
-  net.setCertificate(AWS_CERT_CRT);
-  net.setPrivateKey(AWS_CERT_PRIVATE);
+  //net.setCACert(AWS_CERT_CA);
+  //net.setCertificate(AWS_CERT_CRT);
+ // net.setPrivateKey(AWS_CERT_PRIVATE);
 
   // Connect to the MQTT broker on the AWS endpoint we defined earlier
+  //Serial.print("result of the AWS IOT ENDPOINT CONNECTION FROM PORT 8883: ");
   client.begin(AWS_IOT_ENDPOINT, 8883, net);
 
   // Create a message handler
@@ -37,8 +38,9 @@ void connectAWS()
   Serial.print("Connecting to AWS IOT");
 
   while (!client.connect(THINGNAME)) {
+    Serial.print(client.connect(THINGNAME));
     Serial.print(".");
-    delay(100);
+    delay(1000);
   }
 
   if(!client.connected()){
@@ -56,7 +58,8 @@ void publishMessage()
 {
   StaticJsonDocument<200> doc;
   doc["time"] = millis();
-  doc["sensor_a0"] = analogRead(0);
+  doc["sensor_a0"] = "this message is sent by Cem.";
+  //doc["sensor_a0"] = analogRead(0);
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
 
@@ -65,10 +68,9 @@ void publishMessage()
 
 void messageHandler(String &topic, String &payload) {
   Serial.println("incoming: " + topic + " - " + payload);
-
-//  StaticJsonDocument<200> doc;
-//  deserializeJson(doc, payload);
-//  const char* message = doc["message"];
+  StaticJsonDocument<200> doc;
+  deserializeJson(doc, payload);
+  const char* message = doc["message"];
 }
 
 void setup() {
@@ -77,6 +79,7 @@ void setup() {
 }
 
 void loop() {
+  //messageHandler(AWS_IOT_SUBSCRIBE_TOPIC,);
   publishMessage();
   client.loop();
   delay(1000);
